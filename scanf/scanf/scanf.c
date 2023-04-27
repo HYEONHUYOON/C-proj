@@ -6,25 +6,25 @@
 
 void Scanf(const char* str, void* a, void* b, void* c, void* d)
 {
-	//ÀÔ·Â ¹®ÀÚ¿­
+	//ì…ë ¥ ë¬¸ìì—´
 	char strinput[1024];
 	gets(strinput);
 
-	//ÅäÅ«È­
+	//í† í°í™”
 	char* tok = strtok(strinput, " ");
 
-	//¹®ÀÚ¿­ ¼øÈ¸ Ä«¿îÆ®
+	//ë¬¸ìì—´ ìˆœíšŒ ì¹´ìš´íŠ¸
 	int chekcnt = 0;
 
-	//¸Å°³º¯¼ö void Æ÷ÀÎÅÍ
+	//ë§¤ê°œë³€ìˆ˜ void í¬ì¸í„°
 	void* param[4] = { a,b,c,d };
 
-	//¸Å°³º¯¼ö Ä«¿îÆ®
+	//ë§¤ê°œë³€ìˆ˜ ì¹´ìš´íŠ¸
 	int paramcnt = 0;
 
 	while (1)
 	{
-		//%ÀÏ¶§ ´ÙÀ½ ¹®ÀÚ È®ÀÎ
+		//%ì¼ë•Œ ë‹¤ìŒ ë¬¸ì í™•ì¸
 		if (str[chekcnt] == '%')
 		{
 			switch (str[chekcnt + 1])
@@ -70,7 +70,8 @@ int main()
 	char b;
 	float c;
 	char d[1024];
-
+	
+	printf("ì…ë ¥í•˜ì‹œì˜¤: ");
 	Scanf("%d %c %f %s", &a, &b, &c, d);
 	printf("Values entered: %d %c %f %s\n", a, b, c, d);
 	return 0;
