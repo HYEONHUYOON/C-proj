@@ -1,2 +1,0 @@
-D:\123123123\cProj\x64\Debug\cProj.exe
-C:\Users\윤현후\Desktop\scanf\cProj\x64\Debug\cProj.exe
