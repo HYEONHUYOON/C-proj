@@ -1,0 +1,6 @@
+﻿  scanf.c
+C:\Users\윤현후\source\repos\scanf\scanf\scanf.c(5,1): warning C4005: '_CRT_SECURE_NO_WARNINGS': 매크로 재정의
+C:\Users\윤현후\source\repos\scanf\scanf\scanf.c(5,1): message : 이전에 명령줄에서 선언된 '_CRT_SECURE_NO_WARNINGS'
+C:\Users\윤현후\source\repos\scanf\scanf\scanf.c(11,2): warning C4013: 'gets'이(가) 정의되지 않았습니다. extern은 int형을 반환하는 것으로 간주합니다.
+C:\Users\윤현후\source\repos\scanf\scanf\scanf.c(45,34): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  scanf.vcxproj -> C:\Users\윤현후\source\repos\scanf\x64\Debug\scanf.exe
