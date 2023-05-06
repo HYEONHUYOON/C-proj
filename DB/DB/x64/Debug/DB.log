@@ -1,0 +1,6 @@
+﻿  DB.c
+C:\Users\윤현후\source\repos\DB\DB\DB.c(249,4): warning C4013: 'Scan'이(가) 정의되지 않았습니다. extern은 int형을 반환하는 것으로 간주합니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(299): warning C4716: 'Scan': 값을 반환해야 합니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(84): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(91): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
+  DB.vcxproj -> C:\Users\윤현후\source\repos\DB\x64\Debug\DB.exe
