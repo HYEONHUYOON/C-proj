@@ -4,9 +4,9 @@
 #include <string.h>
 #include<stdlib.h>
 
-typedef __int8 bool;
-
 #define READLEN_MAX 1024
+
+typedef __int8 bool;
 #define TRUE 1
 #define FALSE 0
 
@@ -27,12 +27,11 @@ struct arrayCount {
 	int d;
 	//문자 입력 갯수
 	int c;
-
+	//전체 입력 갯수
 	int allCount;
 };
 
 struct elementsStruct {
-
 	//count
 	int numCnt;
 	int chCnt;
@@ -187,7 +186,7 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 	tokenBuffer* tokens2 = tokenizing(resultStr);
 
 	//debug
-	int Count = 0;
+	/*int Count = 0;
 	while (tokens1[Count].buffer[0] != '\0')
 	{
 		printf("%s ", tokens1[Count++].buffer);
@@ -198,7 +197,7 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 	{
 		printf("%s ", tokens2[Count++].buffer);
 	}
-	printf("\n");
+	printf("\n");*/
 	
 	//다른 문자열 담을 공간
 	char** exchange = (char**)malloc(sizeof(char*)*cnt.allCount);
@@ -213,7 +212,7 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 	int tok2Cnt = 0;
 
 	//나눠야 하는 갯수 만큼
-	while (exchageCnt!=cnt.allCount)
+	while ((strcmp(tokens1[tok1Cnt].buffer,"\0") != 0))
 	{
 		//같으면 PASS 
 		if (strcmp(tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer) == 0)
@@ -235,7 +234,7 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 			while(strcmp(tokens1[tok1Cnt+1].buffer, tokens2[++tok2Cnt].buffer) != 0)
 			{	
 				strcat(exchange[exchageCnt], " ");
-				strcat(exchange[exchageCnt], tokens2[tok2Cnt+1].buffer);
+				strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
 				//printf("INSERT : %s\n", exchange[exchageCnt]);
 			}
 
@@ -253,40 +252,118 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 		}
 	}
 	
-	//printf("1 : %s 2 : %s 3 : %s \n", exchange[0], exchange[1], exchange[2]);
+	printf("1 : %s 2 : %s 3 : %s \n", exchange[0], exchange[1], exchange[2]);
 
 	free(exchange);
+	free(tokens1);
+	free(tokens2);
 	return elements;
+}
+
+//문자열에서 문자열 제거
+void RemoveString(char* origin, char* delimiter)
+{
+	int i, j, k;
+	int len1 = strlen(origin);
+	int len2 = strlen(delimiter);
+	int found;
+
+	for (i = 0; i <= len1 - len2; i++) {
+		found = 1;
+		for (j = i, k = 0; delimiter[k] != '\0'; j++, k++) {
+			if (origin[j] != delimiter[k]) {
+				found = 0;
+				break;
+			}
+		}
+		if (found == 1) {
+			for (j = i, k = 0; k < len2; j++, k++) {
+				origin[j] = origin[j + len2];
+			}
+			i--;
+			len1 = strlen(origin);
+		}
+	}
+
 }
 
 //키워드 확인하여 할당
 Scan(char* origin,char* compareStr, struct elementsStruct* element)
 {
+	printf("\n-문자열 검사-\n");
 	int originCnt = 0;
 	int compCnt = 0;
 
+	char str[READLEN_MAX];
+	strcpy(str, "\0");
+
 	//char str[READLEN_MAX];
 
-	while (origin[originCnt] != '\0')
+	while (origin[originCnt] != '\0'&& compareStr[compCnt] != '\0')
 	{
-		//형식지정자 나오면
-		if (origin[originCnt] == '%')
+		int originRocation;
+		//같으면 거름
+		if (origin[originCnt] == compareStr[compCnt])
 		{
-			switch (origin[originCnt + 1])
+			originCnt++;
+			compCnt++;
+			printf("넘김\n");
+		}
+		else {
+			int originRocation = originCnt;
+			//같은 영역 제거
+			strcpy(str, compareStr + compCnt);
+
+			//토큰 분리
+			char str2[READLEN_MAX];
+			str2[0] = '\0';
+			//형식 지정자 다음으로 이동
+			originCnt += 2;
+			int insertCnt = 0;
+			// %
+			while (origin[originCnt] != '%' && origin[originCnt] != '\0')
 			{
-			case 'd':
-				
-				break;
-			case 's':
-				
-				break;
-			case 'c':
-				element->ch[element->chCnt] = compareStr[compCnt];
-				printf("read : %c ", element->ch[element->chCnt]);
+				str2[insertCnt] = origin[originCnt];
 				originCnt++;
-				break;
-			default:
-				break;
+				insertCnt++;
+			}
+			str2[insertCnt] = '\0';
+			printf("스트링 : %s \n나눌 문자열 : %s \n",str, str2);
+			
+			char* pch;
+			pch = strstr(str,str2);
+			printf("기준 : %s\n", pch);
+			
+			RemoveString(str, pch);
+			printf("read str : %s \n", str);
+
+			//형식지정자 나오면
+			if (origin[originCnt] == '%')
+			{
+				switch (origin[originCnt + 1])
+				{
+				case 'd':
+					printf("입력 -  \n");
+					element->num[element->numCnt] = atoi(str);
+					printf("완료 : %s \n\n", element->num[element->numCnt]);
+					element->strCnt++;
+					compCnt += strlen(str);
+					originCnt = originRocation;
+					break;
+				case 's':
+					printf("입력 -  \n");
+					strcpy(element->str[element->strCnt], str);
+					printf("완료 : %s \n\n", element->str[element->strCnt]);
+					element->strCnt++;
+					compCnt += strlen(str);
+					originCnt = originRocation;
+					break;
+				case 'c':
+
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -337,4 +414,4 @@ int main()
 	free(elements.str);
 	fclose(ReadTxt);
 	return 0;
-}
+} 
