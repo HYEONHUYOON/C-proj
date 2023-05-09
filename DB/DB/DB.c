@@ -170,87 +170,6 @@ tokenBuffer* tokenizing(char* str)
 	return ring;
 }
 
-//나누어 각 주솟값에 반환
-struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
-{
-	//요소 구조체
-	struct elementsStruct elements;
-	elements.numCnt = 0;
-	elements.chCnt = 0;
-	elements.strCnt = 0;
-
-	//키워드 갯수 받기
-	struct arrayCount cnt = ForMalloc(keyWordStr);
-
-	if (cnt.d == 0 && cnt.c == 0 && cnt.s == 0)
-	{
-		return elements;
-	}
-
-	//동적 할당
-	elements.num = (int*)malloc(cnt.d * 4);
-	elements.ch = (char*)malloc(cnt.c);
-	elements.str = (char**)malloc(sizeof(char*) * cnt.s);
-	for (int i = 0; i < cnt.s; i++) {
-		elements.str[i] = (char*)malloc(sizeof(char) * READLEN_MAX);
-	}
-	
-	//토큰
-	tokenBuffer* tokens1 = tokenizing(keyWordStr);
-	tokenBuffer* tokens2 = tokenizing(resultStr);
-	
-	//다른 문자열 담을 공간
-	char** exchange = (char**)malloc(sizeof(char*)*cnt.allCount);
-	for (int i = 0; i < cnt.allCount; i++) {
-		exchange[i] = (char*)malloc(sizeof(char) * READLEN_MAX);
-		strcpy(exchange[i],"\0");
-	}
-
-	//while Count
-	int exchageCnt = 0;
-	int tok1Cnt = 0;
-	int tok2Cnt = 0;
-
-	//나눠야 하는 갯수 만큼
-	while ((strcmp(tokens1[tok1Cnt].buffer,"\0") != 0))
-	{
-		//같으면 PASS 
-		if (strcmp(tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer) == 0)
-		{
-			tok1Cnt++;
-			tok2Cnt++;
-		}
-		else {
-			//현재 배열 INDEX
-			int tok2Rocate = tok2Cnt;
-
-			//다시 같은 문자열이 나올때 까지 동적 할당된 문자열에 붙임
-			strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
-			while(strcmp(tokens1[tok1Cnt+1].buffer, tokens2[++tok2Cnt].buffer) != 0)
-			{	
-				strcat(exchange[exchageCnt], " ");
-				strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
-			}
-
-			//그 뒤에 바로 같은 문자열 이라면
-			if (tok2Rocate == tok2Cnt)
-			{
-				tok2Cnt++;
-			}
-
-			//키워드 확인하여 할당
-			Scan(tokens1[tok1Cnt].buffer, exchange[exchageCnt], &elements);
-			tok1Cnt++;
-			exchageCnt++;
-		}
-	}
-
-	free(exchange);
-	free(tokens1);
-	free(tokens2);
-	return elements;
-}
-
 //문자열에서 문자열 제거
 void RemoveString(char* origin, char* delimiter)
 {
@@ -279,7 +198,7 @@ void RemoveString(char* origin, char* delimiter)
 }
 
 //키워드 확인하여 할당
-Scan(char* origin,char* compareStr, struct elementsStruct* element)
+Scan(char* origin, char* compareStr, struct elementsStruct* element)
 {
 	int originCnt = 0;
 	int compCnt = 0;
@@ -289,7 +208,7 @@ Scan(char* origin,char* compareStr, struct elementsStruct* element)
 
 	//char str[READLEN_MAX];
 
-	while (origin[originCnt] != '\0'&& compareStr[compCnt] != '\0')
+	while (origin[originCnt] != '\0' && compareStr[compCnt] != '\0')
 	{
 		int originRocation;
 		//같으면 거름
@@ -322,7 +241,7 @@ Scan(char* origin,char* compareStr, struct elementsStruct* element)
 			}
 			str2[insertCnt] = '\0';
 			//printf("스트링 : %s \n나눌 문자열 : %s \n",str, str2);
-			
+
 			//나누어야 하면
 			if (str2[0] != '\0')
 			{
@@ -347,7 +266,7 @@ Scan(char* origin,char* compareStr, struct elementsStruct* element)
 				case 'd':
 					//printf("입력 -  \n");
 					element->num[element->numCnt] = atoi(str);
-					//printf("완료 : %d \n\n", element->num[element->numCnt]);
+					printf("완료 : %d \n\n", element->num[element->numCnt]);
 					element->numCnt++;
 					originCnt += 2;
 					compCnt += strlen(str);
@@ -357,7 +276,7 @@ Scan(char* origin,char* compareStr, struct elementsStruct* element)
 					//count 수정 하여 올바르게 넣기 수정 
 					//printf("입력 -  \n");
 					strcpy(element->str[element->strCnt], str);
-					//printf("완료 : %s \n\n", element->str[element->strCnt]);
+					printf("완료 : %s \n\n", element->str[element->strCnt]);
 					element->strCnt++;
 					originCnt += 2;
 					compCnt += strlen(str);
@@ -366,7 +285,7 @@ Scan(char* origin,char* compareStr, struct elementsStruct* element)
 				case 'c':
 					//printf("입력 -  \n");
 					element->ch[element->chCnt] = str[0];
-					//printf("완료 : %c \n\n", element->ch[element->chCnt]);
+					printf("완료 : %c \n\n", element->ch[element->chCnt]);
 					element->chCnt++;
 					originCnt += 2;
 					compCnt += strlen(str);
@@ -378,6 +297,153 @@ Scan(char* origin,char* compareStr, struct elementsStruct* element)
 			}
 		}
 	}
+}
+
+//문자열 비교 함수 %형식지정자를 제외한 문자가 모두 있는지 검사
+bool checkStrCmp(char* origin, char* compareStr)
+{
+	struct arrayCount cnt = ForMalloc(origin);
+
+	//기준 
+	char **delimiter = (char**)malloc(sizeof(char*) * cnt.allCount+1);
+	for (int i = 0; i < cnt.allCount+1; i++) {
+		delimiter[i] = (char*)malloc(sizeof(char) * READLEN_MAX);
+		strcpy(delimiter[i], "\0");
+	}
+
+	int i = 0;
+	int delimiterCnt = 0;
+
+	while (origin[i] != '\0')
+	{
+		if (origin[i] == '%')
+		{
+			strcpy(delimiter[delimiterCnt], origin + i - 1);
+			i += 2;
+		}
+		else {
+			strcat(delimiter[delimiterCnt], origin[i]);
+			i++;
+		}
+	}
+
+	for (int i = 0; i < cnt.allCount + 1; i++)
+	{
+		char* pch;
+		pch = strstr(compareStr, delimiter[i]);
+		if (strcmp(pch, NULL))
+		{
+			break;
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+//나누어 각 주솟값에 반환
+struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
+{
+	//요소 구조체
+	struct elementsStruct elements;
+	elements.numCnt = 0;
+	elements.chCnt = 0;
+	elements.strCnt = 0;
+
+	//키워드 갯수 받기
+	struct arrayCount cnt = ForMalloc(keyWordStr);
+
+	////아무것도 안받았을 때 예외처리
+	//if (cnt.d == 0 && cnt.c == 0 && cnt.s == 0)
+	//{
+	//	return elements;
+	//}
+
+	//동적 할당
+	elements.num = (int*)malloc(cnt.d * 4);
+	elements.ch = (char*)malloc(cnt.c);
+	elements.str = (char**)malloc(sizeof(char*) * cnt.s);
+	for (int i = 0; i < cnt.s; i++) {
+		elements.str[i] = (char*)malloc(sizeof(char) * READLEN_MAX);
+	}
+	
+	//토큰
+	tokenBuffer* tokens1 = tokenizing(keyWordStr);
+	tokenBuffer* tokens2 = tokenizing(resultStr);
+
+	int i = 0;
+	while (tokens1[i].buffer[0] != '\0')
+	{
+		printf("token : %s \n", tokens1[i].buffer);
+		i++;
+	}
+
+	printf("\n");
+	i = 0;
+	while (tokens2[i].buffer[0] != '\0')
+	{
+		printf("token : %s \n", tokens2[i].buffer);
+		i++;
+	}
+	
+	//다른 문자열 담을 공간
+	char** exchange = (char**)malloc(sizeof(char*)*cnt.allCount);
+	for (int i = 0; i < cnt.allCount; i++) {
+		exchange[i] = (char*)malloc(sizeof(char) * READLEN_MAX);
+		strcpy(exchange[i],"\0");
+	}
+
+	//while Count
+	int exchageCnt = 0;
+	int tok1Cnt = 0;
+	int tok2Cnt = 0;
+
+	//나눠야 하는 갯수 만큼
+	while ((strcmp(tokens1[tok1Cnt].buffer,"\0") != 0))
+	{
+		//같으면 PASS 
+		if (strcmp(tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer) == 0)
+		{
+			tok1Cnt++;
+			tok2Cnt++;
+		}
+		else {
+			printf("다름 : %s \n", tokens2[tok2Cnt].buffer);
+			//현재 배열 INDEX
+			int tok2Rocate = tok2Cnt;
+
+			//다시 같은 문자열이 나올때 까지 동적 할당된 문자열에 붙임
+			strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
+			tok2Cnt++;
+	
+			//이방식을 바꾸어야 함
+			while (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt + 1].buffer))
+			{
+				printf(" : %s \n", exchange[exchageCnt]);
+				strcat(exchange[exchageCnt], " ");
+				strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
+				tok2Cnt++;
+			}
+			
+			printf("완료 \n");
+			
+			//그 뒤에 바로 같은 문자열 이라면
+			if (tok2Rocate == tok2Cnt)
+			{
+				tok2Cnt++;
+			}
+
+			//키워드 확인하여 할당
+			Scan(tokens1[tok1Cnt].buffer, exchange[exchageCnt], &elements);
+			tok1Cnt++;
+			exchageCnt++;
+		}
+	}
+
+	free(exchange);
+	free(tokens1);
+	free(tokens2);
+	return elements;
 }
 
 int main()
@@ -392,10 +458,10 @@ int main()
 		printf("파일을 열었습니다. \n");
 	}
 
-	//파일 사이즈
-	fseek(ReadTxt, 0, SEEK_END);
-	int fileSize = ftell(ReadTxt);
-	rewind(ReadTxt);
+	////파일 사이즈
+	//fseek(ReadTxt, 0, SEEK_END);
+	//int fileSize = ftell(ReadTxt);
+	//rewind(ReadTxt);
 	
 	//저장 문자열
 	char keyWordStr[READLEN_MAX];
@@ -423,21 +489,21 @@ int main()
 	printf("int %d개 => ",elements.numCnt);
 	for (int i = 0; i < elements.numCnt; i++)
 	{
-		printf("%d 번째 : %d ", i+1, elements.num[i]);
+		printf("%d 번째 : %d | ", i+1, elements.num[i]);
 	}
 	printf("\n");
 
 	printf("char %d개 => ", elements.chCnt);
 	for (int i = 0; i < elements.chCnt; i++)
 	{
-		printf("%d 번째 : %c ", i + 1, elements.ch[i]);
+		printf("%d 번째 : %c | ", i + 1, elements.ch[i]);
 	}
 	printf("\n");
 
 	printf("String %d개 => ", elements.strCnt);
 	for (int i = 0; i < elements.strCnt; i++)
 	{
-		printf("%d 번째 : %s ", i + 1, elements.str[i]);
+		printf("%d 번째 : %s | ", i + 1, elements.str[i]);
 	}
 	printf("\n");
 
