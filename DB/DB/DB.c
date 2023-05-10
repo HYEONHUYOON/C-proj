@@ -200,6 +200,7 @@ void RemoveString(char* origin, char* delimiter)
 //키워드 확인하여 할당
 Scan(char* origin, char* compareStr, struct elementsStruct* element)
 {
+	printf("origin : %s \n comp : %s \n", origin, compareStr);
 	int originCnt = 0;
 	int compCnt = 0;
 
@@ -214,7 +215,7 @@ Scan(char* origin, char* compareStr, struct elementsStruct* element)
 		//같으면 거름
 		if (origin[originCnt] == compareStr[compCnt])
 		{
-			//printf("넘김\n");
+			printf("넘김\n");
 			originCnt++;
 			compCnt++;
 		}
@@ -302,7 +303,8 @@ Scan(char* origin, char* compareStr, struct elementsStruct* element)
 //문자열 비교 함수 %형식지정자를 제외한 문자가 모두 있는지 검사
 bool checkStrCmp(char* origin, char* compareStr)
 {
-	struct arrayCount cnt = ForMalloc(origin);
+	printf("검사 : %s \n", origin);
+	struct arrayCount cnt = ForMalloc(origin); 
 
 	//기준 
 	char **delimiter = (char**)malloc(sizeof(char*) * cnt.allCount+1);
@@ -312,26 +314,36 @@ bool checkStrCmp(char* origin, char* compareStr)
 	}
 
 	int i = 0;
+	int j = 0;
 	int delimiterCnt = 0;
 
 	while (origin[i] != '\0')
 	{
-		if (origin[i] == '%')
+		if (origin[i] != '%')
 		{
-			strcpy(delimiter[delimiterCnt], origin + i - 1);
-			i += 2;
-		}
-		else {
-			strcat(delimiter[delimiterCnt], origin[i]);
+			//printf("read 1: %s \n", delimiter[delimiterCnt]);
+			delimiter[delimiterCnt][j] = origin[i];
 			i++;
+			j++;
+		}
+		else if(origin[i] == '%'){
+			delimiter[delimiterCnt][j+1] = '\0';
+			//printf("read 2: %s \n", delimiter[delimiterCnt]);
+			i += 2;
+			j = 0;
+			delimiterCnt++;
 		}
 	}
+
+	delimiter[delimiterCnt][j] = '\0';
 
 	for (int i = 0; i < cnt.allCount + 1; i++)
 	{
 		char* pch;
 		pch = strstr(compareStr, delimiter[i]);
-		if (strcmp(pch, NULL))
+		printf("%s | comp whith | %s \n", compareStr, delimiter[i]);
+		printf("read result: %s \n", pch);
+		if (pch == NULL)
 		{
 			break;
 			return FALSE;
@@ -404,35 +416,39 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 		//같으면 PASS 
 		if (strcmp(tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer) == 0)
 		{
+			printf("같음 \n");
 			tok1Cnt++;
 			tok2Cnt++;
 		}
 		else {
-			printf("다름 : %s \n", tokens2[tok2Cnt].buffer);
+			printf("다름 : %s | %s \n", tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer);
 			//현재 배열 INDEX
 			int tok2Rocate = tok2Cnt;
 
 			//다시 같은 문자열이 나올때 까지 동적 할당된 문자열에 붙임
 			strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
 			tok2Cnt++;
-	
-			//이방식을 바꾸어야 함
-			while (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt + 1].buffer))
-			{
-				printf(" : %s \n", exchange[exchageCnt]);
-				strcat(exchange[exchageCnt], " ");
-				strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
-				tok2Cnt++;
-			}
+
+			//if (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt].buffer) == FALSE) {
+			// * DEBUG *
+				//이방식을 바꾸어야 함
+				while (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt].buffer) != TRUE)
+				{
+					printf(" : %s \n", exchange[exchageCnt]);
+					strcat(exchange[exchageCnt], " ");
+					strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
+					tok2Cnt++;
+				}
 			
-			printf("완료 \n");
 			
+			printf("완료 %s \n",exchange);
+
 			//그 뒤에 바로 같은 문자열 이라면
 			if (tok2Rocate == tok2Cnt)
 			{
 				tok2Cnt++;
 			}
-
+			
 			//키워드 확인하여 할당
 			Scan(tokens1[tok1Cnt].buffer, exchange[exchageCnt], &elements);
 			tok1Cnt++;

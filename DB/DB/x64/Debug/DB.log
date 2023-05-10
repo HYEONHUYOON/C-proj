@@ -3,12 +3,11 @@ C:\Users\윤현후\source\repos\DB\DB\DB.c(127,25): warning C4047: '==': 'int'�
 C:\Users\윤현후\source\repos\DB\DB\DB.c(194,11): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\윤현후\source\repos\DB\DB\DB.c(177,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\윤현후\source\repos\DB\DB\DB.c(178,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(272,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(282,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(291,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(213,7): warning C4101: 'originRocation' :참조되지 않은 지역 변수입니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(324,45): warning C4047: '함수': 'const char *'의 간접 참조 수준이 'char'과(와) 다릅니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(324,42): warning C4024: 'strcat': 형식 및 실제 매개 변수 2의 형식이 서로 다릅니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(273,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(283,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(292,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(214,7): warning C4101: 'originRocation' :참조되지 않은 지역 변수입니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(443,11): warning C4477: 'printf' : 서식 문자열 '%s'에 'char *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'char **'입니다.
 C:\Users\윤현후\source\repos\DB\DB\DB.c(86): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
 C:\Users\윤현후\source\repos\DB\DB\DB.c(93): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
   DB.vcxproj -> C:\Users\윤현후\source\repos\DB\x64\Debug\DB.exe
