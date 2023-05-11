@@ -19,19 +19,7 @@ typedef struct {
 	char buffer[READLEN_MAX];
 }tokenBuffer;
 
-//키워드 갯수 구조체
-struct arrayCount {
-	//문자열 입력 갯수
-	int s;
-	//정수 입력 갯수
-	int d;
-	//문자 입력 갯수
-	int c;
-	//전체 입력 갯수
-	int allCount;
-};
-
-struct elementsStruct {
+typedef struct {
 	//count
 	int numCnt;
 	int chCnt;
@@ -44,22 +32,31 @@ struct elementsStruct {
 
 	//성공 여부
 	bool isFaile;
+}elementsStruct;
+
+//키워드 갯수 구조체
+struct arrayCount {
+	//문자열 입력 갯수
+	int s;
+	//정수 입력 갯수
+	int d;
+	//문자 입력 갯수
+	int c;
+	//전체 입력 갯수
+	int allCount;
 };
 
 //" "안의 문자열을 받는 함수
 char *ReadFileRine(FILE* file)
 {
 	char readBuffer[READLEN_MAX];
-
 	int readCnt = 0;
-
 	bool comment = FALSE;
 
 	// " 가 나올때 까지 받기
 	do {
 		// 주석일 때
-		if (readBuffer[readCnt] == '/')
-		{
+		if (readBuffer[readCnt] == '/'){
 			readBuffer[readCnt] = fgetc(file);
 			if (readBuffer[readCnt] == '/') {
 				readBuffer[readCnt] = '\0';
@@ -68,8 +65,7 @@ char *ReadFileRine(FILE* file)
 		}
 
 		//주석이 끝나면
-		if (comment == TRUE && readBuffer[readCnt] == '\n')
-		{
+		if (comment == TRUE && readBuffer[readCnt] == '\n'){
 			comment = FALSE;
 		}
 
@@ -78,8 +74,7 @@ char *ReadFileRine(FILE* file)
 			readBuffer[readCnt] = fgetc(file);
 
 			// 다시 " 가 나올 떄 까지 문자열 받기
-			while (readBuffer[readCnt] != '"')
-			{
+			while (readBuffer[readCnt] != '"'){
 				readBuffer[++readCnt] = fgetc(file);
 			}
 			readBuffer[readCnt] = '\0';
@@ -104,10 +99,8 @@ struct arrayCount ForMalloc(char* str)
 	while (str[i] != '\0')
 	{
 		//형식지정자 나오면
-		if (str[i] == '%')
-		{
-			switch (str[i+1])
-			{
+		if (str[i] == '%'){
+			switch (str[i+1]){
 			case 'd':
 				cnt.d++;
 				cnt.allCount++;
@@ -124,8 +117,7 @@ struct arrayCount ForMalloc(char* str)
 				break;
 			}
 
-			if (str[i + 2] == "%")
-			{
+			if (str[i + 2] == "%"){
 				//예외 처리 하기
 				printf("형식지정자가 연속입니다.");
 			}
@@ -142,29 +134,27 @@ tokenBuffer* tokenizing(char* str)
 	int i = 0;
 	int cnt = 0;
 
-	//구분문자 갯수 확인
-	while (str[i] != '\0')
-	{
-		if (str[i] == ' ')
-		{
-			if (str[i - 1] != ' ')
-			{
+	//나눌 구분문자 갯수 확인
+	while (str[i] != '\0'){
+		if (str[i] == ' '){
+			if (str[i - 1] != ' '){
 				cnt++;
 			}
 		}
 		i++;
 	}
 
+	//토큰 동적 할당
 	tokenBuffer* ring = malloc(sizeof(tokenBuffer) * (cnt + 2));
 
+	//차례대로 토큰화
 	strcpy(ring[0].buffer, strtok(str, " "));
 
-	for (int i = 0; i < cnt; i++)
-	{
+	for (int i = 0; i < cnt; i++){
 		strcpy(ring[i + 1].buffer, strtok(NULL, " "));
 	}
 
-	// 마지막 요소를 NULL로 설정
+	// 마지막 요소에 NULL문자
 	ring[cnt + 1].buffer[0] = '\0';
 
 	return ring;
@@ -194,33 +184,25 @@ void RemoveString(char* origin, char* delimiter)
 			len1 = strlen(origin);
 		}
 	}
-
 }
 
 //키워드 확인하여 할당
-Scan(char* origin, char* compareStr, struct elementsStruct* element)
+Scan(char* origin, char* compareStr, elementsStruct* element)
 {
-	printf("origin : %s \n comp : %s \n", origin, compareStr);
+	printf("origin : %s \ncompareStr : %s\n", origin, compareStr);
 	int originCnt = 0;
 	int compCnt = 0;
 
 	char str[READLEN_MAX];
-	strcpy(str, "\0");
+	str[0] = '\0';
 
-	//char str[READLEN_MAX];
-
-	while (origin[originCnt] != '\0' && compareStr[compCnt] != '\0')
-	{
+	while (origin[originCnt] != '\0' && compareStr[compCnt] != '\0'){
 		int originRocation;
 		//같으면 거름
-		if (origin[originCnt] == compareStr[compCnt])
-		{
-			printf("넘김\n");
+		if (origin[originCnt] == compareStr[compCnt]){
 			originCnt++;
 			compCnt++;
-		}
-		else {
-			//printf("다름 %c \n", origin[originCnt]);
+		}else {
 			//같은 영역 제거
 			strcpy(str, compareStr + compCnt);
 
@@ -228,69 +210,54 @@ Scan(char* origin, char* compareStr, struct elementsStruct* element)
 			char str2[READLEN_MAX];
 			str2[0] = '\0';
 			int originRocation = originCnt;
+
 			//형식 지정자 다음으로 이동
 			originCnt += 2;
 
 			//형식지정자 후 위치 기억
 			int insertCnt = 0;
+
 			// 형식지정자 또는 끝까지 문자열 받아 구분문자로 받음
-			while (origin[originCnt] != '%' && origin[originCnt] != '\0')
-			{
+			while (origin[originCnt] != '%' && origin[originCnt] != '\0'){
 				str2[insertCnt] = origin[originCnt];
 				originCnt++;
 				insertCnt++;
 			}
 			str2[insertCnt] = '\0';
-			//printf("스트링 : %s \n나눌 문자열 : %s \n",str, str2);
 
 			//나누어야 하면
-			if (str2[0] != '\0')
-			{
+			if (str2[0] != '\0'){
 				//구분문자가 있는 가장 첫 위치
 				char* pch;
 				pch = strstr(str, str2);
-				//printf("기준 : %s\n", pch);
 
 				//받은 문자 위치 자름
 				RemoveString(str, pch);
-				//printf("read str : %s \n", str);
 			}
-
 			originCnt = originRocation;
-			//printf("아니 % c \n", origin[originCnt]);
 
 			//형식지정자 나오면
-			if (origin[originCnt] == '%')
-			{
-				switch (origin[originCnt + 1])
-				{
+			if (origin[originCnt] == '%'){
+				switch (origin[originCnt + 1]){
 				case 'd':
-					//printf("입력 -  \n");
 					element->num[element->numCnt] = atoi(str);
-					printf("완료 : %d \n\n", element->num[element->numCnt]);
 					element->numCnt++;
 					originCnt += 2;
 					compCnt += strlen(str);
-					//printf("같은가? : %c%c \n 같은가?2 : %c%c \n", origin[originCnt], origin[originCnt + 1], compareStr[compCnt], compareStr[compCnt + 1]);
 					break;
 				case 's':
 					//count 수정 하여 올바르게 넣기 수정 
-					//printf("입력 -  \n");
 					strcpy(element->str[element->strCnt], str);
-					printf("완료 : %s \n\n", element->str[element->strCnt]);
 					element->strCnt++;
 					originCnt += 2;
 					compCnt += strlen(str);
-					//printf("같은가? : %c%c \n 같은가?2 : %c%c \n", origin[originCnt], origin[originCnt+1], compareStr[compCnt], compareStr[compCnt+1]);
 					break;
 				case 'c':
 					//printf("입력 -  \n");
 					element->ch[element->chCnt] = str[0];
-					printf("완료 : %c \n\n", element->ch[element->chCnt]);
 					element->chCnt++;
 					originCnt += 2;
 					compCnt += strlen(str);
-					//printf("같은가? : %c%c \n 같은가?2 : %c%c \n", origin[originCnt], origin[originCnt + 1], compareStr[compCnt], compareStr[compCnt + 1]);
 					break;
 				default:
 					break;
@@ -300,13 +267,10 @@ Scan(char* origin, char* compareStr, struct elementsStruct* element)
 	}
 }
 
-//문자열 비교 함수 %형식지정자를 제외한 문자가 모두 있는지 검사
+//문자열 비교 함수 %형식지정자를 제외한 문자가 모두 포함되어 있는지 검사
 bool checkStrCmp(char* origin, char* compareStr)
 {
-	printf("검사 : %s \n", origin);
 	struct arrayCount cnt = ForMalloc(origin); 
-
-	//기준 
 	char **delimiter = (char**)malloc(sizeof(char*) * cnt.allCount+1);
 	for (int i = 0; i < cnt.allCount+1; i++) {
 		delimiter[i] = (char*)malloc(sizeof(char) * READLEN_MAX);
@@ -317,47 +281,38 @@ bool checkStrCmp(char* origin, char* compareStr)
 	int j = 0;
 	int delimiterCnt = 0;
 
-	while (origin[i] != '\0')
-	{
-		if (origin[i] != '%')
-		{
-			//printf("read 1: %s \n", delimiter[delimiterCnt]);
+	while (origin[i] != '\0'){
+		if (origin[i] != '%'){
 			delimiter[delimiterCnt][j] = origin[i];
 			i++;
 			j++;
 		}
-		else if(origin[i] == '%'){
-			delimiter[delimiterCnt][j+1] = '\0';
-			//printf("read 2: %s \n", delimiter[delimiterCnt]);
+		else{
 			i += 2;
+			delimiter[delimiterCnt][j] = '\0';
 			j = 0;
 			delimiterCnt++;
 		}
 	}
-
+	
 	delimiter[delimiterCnt][j] = '\0';
 
-	for (int i = 0; i < cnt.allCount + 1; i++)
-	{
+	for (int i = 0; i < cnt.allCount + 1; i++){
 		char* pch;
 		pch = strstr(compareStr, delimiter[i]);
-		printf("%s | comp whith | %s \n", compareStr, delimiter[i]);
-		printf("read result: %s \n", pch);
-		if (pch == NULL)
-		{
-			break;
+		if (pch == NULL){
 			return FALSE;
+			break;
 		}
 	}
-
 	return TRUE;
 }
 
 //나누어 각 주솟값에 반환
-struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
+elementsStruct Comapre(char* keyWordStr, char* resultStr)
 {
 	//요소 구조체
-	struct elementsStruct elements;
+	elementsStruct elements;
 	elements.numCnt = 0;
 	elements.chCnt = 0;
 	elements.strCnt = 0;
@@ -382,21 +337,6 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 	//토큰
 	tokenBuffer* tokens1 = tokenizing(keyWordStr);
 	tokenBuffer* tokens2 = tokenizing(resultStr);
-
-	int i = 0;
-	while (tokens1[i].buffer[0] != '\0')
-	{
-		printf("token : %s \n", tokens1[i].buffer);
-		i++;
-	}
-
-	printf("\n");
-	i = 0;
-	while (tokens2[i].buffer[0] != '\0')
-	{
-		printf("token : %s \n", tokens2[i].buffer);
-		i++;
-	}
 	
 	//다른 문자열 담을 공간
 	char** exchange = (char**)malloc(sizeof(char*)*cnt.allCount);
@@ -411,17 +351,13 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 	int tok2Cnt = 0;
 
 	//나눠야 하는 갯수 만큼
-	while ((strcmp(tokens1[tok1Cnt].buffer,"\0") != 0))
-	{
+	while ((strcmp(tokens1[tok1Cnt].buffer,"\0") != 0)){
 		//같으면 PASS 
-		if (strcmp(tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer) == 0)
-		{
-			printf("같음 \n");
+		if (strcmp(tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer) == 0){
 			tok1Cnt++;
 			tok2Cnt++;
 		}
 		else {
-			printf("다름 : %s | %s \n", tokens1[tok1Cnt].buffer, tokens2[tok2Cnt].buffer);
 			//현재 배열 INDEX
 			int tok2Rocate = tok2Cnt;
 
@@ -429,23 +365,14 @@ struct elementsStruct Comapre(char* keyWordStr, char* resultStr)
 			strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
 			tok2Cnt++;
 
-			//if (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt].buffer) == FALSE) {
-			// * DEBUG *
-				//이방식을 바꾸어야 함
-				while (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt].buffer) != TRUE)
-				{
-					printf(" : %s \n", exchange[exchageCnt]);
-					strcat(exchange[exchageCnt], " ");
-					strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
-					tok2Cnt++;
-				}
-			
-			
-			printf("완료 %s \n",exchange);
+			while (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt].buffer) != TRUE){
+				strcat(exchange[exchageCnt], " ");
+				strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
+				tok2Cnt++;
+			}
 
 			//그 뒤에 바로 같은 문자열 이라면
-			if (tok2Rocate == tok2Cnt)
-			{
+			if (tok2Rocate == tok2Cnt){
 				tok2Cnt++;
 			}
 			
@@ -499,26 +426,23 @@ int main()
 	}
 
 	//요소 구조체
-	struct elementsStruct elements = Comapre(keyWordStr, resultStr);
+	elementsStruct elements = Comapre(keyWordStr, resultStr);
 
 	//출력
 	printf("int %d개 => ",elements.numCnt);
-	for (int i = 0; i < elements.numCnt; i++)
-	{
+	for (int i = 0; i < elements.numCnt; i++){
 		printf("%d 번째 : %d | ", i+1, elements.num[i]);
 	}
 	printf("\n");
 
 	printf("char %d개 => ", elements.chCnt);
-	for (int i = 0; i < elements.chCnt; i++)
-	{
+	for (int i = 0; i < elements.chCnt; i++){
 		printf("%d 번째 : %c | ", i + 1, elements.ch[i]);
 	}
 	printf("\n");
 
 	printf("String %d개 => ", elements.strCnt);
-	for (int i = 0; i < elements.strCnt; i++)
-	{
+	for (int i = 0; i < elements.strCnt; i++){
 		printf("%d 번째 : %s | ", i + 1, elements.str[i]);
 	}
 	printf("\n");
