@@ -10,10 +10,11 @@ typedef __int8 bool;
 #define TRUE 1
 #define FALSE 0
 
-//링버퍼
+//버퍼
 typedef struct {
 	//flag Condition
-	//0x01 => 형식지정자 있음
+	//0x01 => 형식지정자 연속됨
+	//0x02 => 형식지정자 단독
 
 	char flag;
 	char buffer[READLEN_MAX];
@@ -116,16 +117,31 @@ struct arrayCount ForMalloc(char* str)
 			default:
 				break;
 			}
-
-			if (str[i + 2] == "%"){
-				//예외 처리 하기
-				printf("형식지정자가 연속입니다.");
-			}
 		}
 		i++;
 	}	
 
 	return cnt;
+}
+
+//예외처리
+bool TokenCheck(tokenBuffer token) {
+	int i =0;
+	while (token.buffer[i] != '\0')
+	{
+		//연속된 형식지정자
+		if (token.buffer[i] == '%' && token.buffer[i + 2] == '%')
+		{
+			return FALSE;
+		}
+		//단독된 형식지정자
+		if(token.buffer[i] == '%' && token.buffer[i + 2] == '\0')
+		{
+			return FALSE;
+		}
+		i++;
+	}
+	return TRUE;
 }
 
 //토큰화
@@ -136,28 +152,26 @@ tokenBuffer* tokenizing(char* str)
 
 	//나눌 구분문자 갯수 확인
 	while (str[i] != '\0'){
-		if (str[i] == ' '){
-			if (str[i - 1] != ' '){
-				cnt++;
-			}
+		if ((str[i] == ' ')&&(str[i - 1] != ' ')){
+			cnt++;
 		}
 		i++;
 	}
 
 	//토큰 동적 할당
-	tokenBuffer* ring = malloc(sizeof(tokenBuffer) * (cnt + 2));
+	tokenBuffer* token = malloc(sizeof(tokenBuffer) * (cnt + 2));
 
 	//차례대로 토큰화
-	strcpy(ring[0].buffer, strtok(str, " "));
+	strcpy(token[0].buffer, strtok(str, " "));
 
 	for (int i = 0; i < cnt; i++){
-		strcpy(ring[i + 1].buffer, strtok(NULL, " "));
+		strcpy(token[i + 1].buffer, strtok(NULL, " "));
 	}
 
 	// 마지막 요소에 NULL문자
-	ring[cnt + 1].buffer[0] = '\0';
+	token[cnt + 1].buffer[0] = '\0';
 
-	return ring;
+	return token;
 }
 
 //문자열에서 문자열 제거
@@ -321,11 +335,27 @@ elementsStruct Comapre(char* keyWordStr, char* resultStr)
 	struct arrayCount cnt = ForMalloc(keyWordStr);
 
 	////아무것도 안받았을 때 예외처리
-	//if (cnt.d == 0 && cnt.c == 0 && cnt.s == 0)
-	//{
-	//	return elements;
-	//}
+	if (cnt.d == 0 && cnt.c == 0 && cnt.s == 0)
+	{
+		elements.isFaile = FALSE;
+		return elements;
+	}
 
+	//토큰
+	tokenBuffer* tokens1 = tokenizing(keyWordStr);
+	tokenBuffer* tokens2 = tokenizing(resultStr);
+
+	int i = 0;
+	//문자열 규칙오류 검사
+	while (tokens1[i].buffer[0] != '\0')
+	{
+		if (!TokenCheck(tokens1[i]))
+		{
+			elements.isFaile = FALSE;
+			return elements;
+		}
+		i++;
+	}
 	//동적 할당
 	elements.num = (int*)malloc(cnt.d * 4);
 	elements.ch = (char*)malloc(cnt.c);
@@ -333,10 +363,6 @@ elementsStruct Comapre(char* keyWordStr, char* resultStr)
 	for (int i = 0; i < cnt.s; i++) {
 		elements.str[i] = (char*)malloc(sizeof(char) * READLEN_MAX);
 	}
-	
-	//토큰
-	tokenBuffer* tokens1 = tokenizing(keyWordStr);
-	tokenBuffer* tokens2 = tokenizing(resultStr);
 	
 	//다른 문자열 담을 공간
 	char** exchange = (char**)malloc(sizeof(char*)*cnt.allCount);
@@ -364,18 +390,15 @@ elementsStruct Comapre(char* keyWordStr, char* resultStr)
 			//다시 같은 문자열이 나올때 까지 동적 할당된 문자열에 붙임
 			strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
 			tok2Cnt++;
-
 			while (checkStrCmp(tokens1[tok1Cnt + 1].buffer, tokens2[tok2Cnt].buffer) != TRUE){
 				strcat(exchange[exchageCnt], " ");
 				strcat(exchange[exchageCnt], tokens2[tok2Cnt].buffer);
 				tok2Cnt++;
 			}
-
 			//그 뒤에 바로 같은 문자열 이라면
 			if (tok2Rocate == tok2Cnt){
 				tok2Cnt++;
 			}
-			
 			//키워드 확인하여 할당
 			Scan(tokens1[tok1Cnt].buffer, exchange[exchageCnt], &elements);
 			tok1Cnt++;
@@ -427,6 +450,12 @@ int main()
 
 	//요소 구조체
 	elementsStruct elements = Comapre(keyWordStr, resultStr);
+
+	if (elements.isFaile == FALSE)
+	{
+		printf("문자열이 규칙에 맞지 않습니다.");
+		return 0;
+	}
 
 	//출력
 	printf("int %d개 => ",elements.numCnt);

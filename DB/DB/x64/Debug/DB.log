@@ -1,12 +1,11 @@
 ﻿  DB.c
-C:\Users\윤현후\source\repos\DB\DB\DB.c(120,25): warning C4047: '==': 'int'의 간접 참조 수준이 'char [2]'과(와) 다릅니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(184,11): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(167,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(168,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(246,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(253,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(260,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(200,7): warning C4101: 'originRocation' :참조되지 않은 지역 변수입니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(81): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
-C:\Users\윤현후\source\repos\DB\DB\DB.c(88): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(197,11): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(180,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(181,13): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(259,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(266,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(273,17): warning C4267: '+=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(213,7): warning C4101: 'originRocation' :참조되지 않은 지역 변수입니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(82): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
+C:\Users\윤현후\source\repos\DB\DB\DB.c(89): warning C4172: 지역 변수 또는 임시: readBuffer의 주소를 반환하고 있습니다.
   DB.vcxproj -> C:\Users\윤현후\source\repos\DB\x64\Debug\DB.exe
